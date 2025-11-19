@@ -315,6 +315,22 @@ $("btnThongBao")?.addEventListener("click", async () => {
 $("closeNotif")?.addEventListener("click", () => $("modalThongBao").close());
 
 // ============================================================
+//  SEARCH PRODUCT
+// ============================================================
+$("searchInput")?.addEventListener("input", function () {
+    const keyword = this.value.toLowerCase().trim();
+
+    filteredList = productList.filter(sp =>
+        sp.ten_sp.toLowerCase().includes(keyword) ||
+        sp.loai_sp.toLowerCase().includes(keyword)
+    );
+
+    currentPage = 1;
+    renderProducts();
+    renderPagination();
+});
+
+// ============================================================
 // INIT
 // ============================================================
 window.onload = () => {

@@ -12,6 +12,7 @@ const API = {
 // ------------------------------
 let currentPage = 1;
 let productList = [];
+let filteredList = []; // danh sách sau khi tìm kiếm
 
 // ------------------------------
 // INIT
@@ -29,6 +30,7 @@ async function loadProducts() {
         if (!data.success) return console.error("Không load được sản phẩm");
 
         productList = data.data;
+        filteredList = [...productList];
 
         renderProducts();
         renderPagination();
@@ -68,7 +70,7 @@ function renderProducts() {
     grid.innerHTML = "";
 
     const start = (currentPage - 1) * ITEMS_PER_PAGE;
-    const items = productList.slice(start, start + ITEMS_PER_PAGE);
+    const items = filteredList.slice(start, start + ITEMS_PER_PAGE);
 
     grid.innerHTML = items.map(createProductCard).join("");
 
@@ -86,7 +88,7 @@ function renderPagination() {
     const pag = document.querySelector(".pagination");
     if (!pag) return;
 
-    const totalPage = Math.ceil(productList.length / ITEMS_PER_PAGE);
+    const totalPage = Math.ceil(filteredList.length / ITEMS_PER_PAGE);
     pag.innerHTML = "";
 
     const createBtn = (page, label, disabled = false) =>
@@ -110,7 +112,7 @@ function renderPagination() {
  * Đổi trang
  */
 function changePage(page) {
-    const totalPage = Math.ceil(productList.length / ITEMS_PER_PAGE);
+    const totalPage = Math.ceil(filteredList.length / ITEMS_PER_PAGE);
     if (page < 1 || page > totalPage) return;
 
     currentPage = page;
@@ -150,3 +152,29 @@ async function openProductDetail(id) {
         console.error("Lỗi load chi tiết:", err);
     }
 }
+
+// ------------------------------
+// SEARCH PRODUCT
+// -----------------------------
+
+function applySearch() {
+    const keyword = document.getElementById("searchInput")?.value.toLowerCase().trim() || "";
+
+    // Nếu ô tìm kiếm trống → hiện toàn bộ sản phẩm
+    if (keyword === "") {
+        filteredList = [...productList];
+    } else {
+        filteredList = productList.filter(sp =>
+            sp.ten_sp.toLowerCase().includes(keyword) ||
+            sp.loai_sp.toLowerCase().includes(keyword) ||
+            sp.gt_sp.toLowerCase().includes(keyword)
+        );
+    }
+
+    currentPage = 1;
+    renderProducts();
+    renderPagination();
+}
+
+// Lắng nghe sự kiện nhập tìm kiếm
+document.getElementById("searchInput")?.addEventListener("input", applySearch);
