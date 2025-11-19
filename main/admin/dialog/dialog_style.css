@@ -1,0 +1,131 @@
+/* dialog_style.css */
+
+/* --- CSS Chung cho Dialog --- */
+dialog {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    padding: 0;
+}
+dialog::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+}
+
+/* --- Dialog Thêm Sản Phẩm (Simple) --- */
+.simple-dialog {
+    width: 500px;
+    max-width: 95%;
+}
+.simple-dialog form {
+    padding: 20px;
+}
+.simple-dialog label {
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+.simple-dialog input, 
+.simple-dialog select, 
+.simple-dialog textarea {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+.dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+/* --- Dialog Chi Tiết Sản Phẩm --- */
+.detail-dialog {
+    width: 650px;
+    max-width: 95%;
+    padding: 20px;
+}
+.detail-layout {
+    display: flex;
+    gap: 20px;
+}
+.detail-dialog img {
+    width: 250px;
+    height: auto;
+    border-radius: 10px;
+    object-fit: cover;
+}
+.detail-info {
+    flex: 1;
+}
+.dialog-actions.right {
+    margin-top: 20px;
+}
+
+/* --- Dialog Sửa Sản Phẩm (Modern - Kế thừa style bạn đã gửi trước đó) --- */
+.modern-modal {
+    width: 600px;
+    max-width: 95%;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: #fff;
+}
+.modal-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.modal-header h2 { margin: 0; font-size: 1.25rem; color: #333; }
+.close-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: #999; }
+.close-btn:hover { color: #333; }
+
+.modal-body { padding: 24px; }
+
+.form-group { margin-bottom: 16px; }
+.form-group label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.9rem; color: #444; }
+.form-group input, .form-group select, .form-group textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    box-sizing: border-box;
+}
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+.image-upload-container {
+    display: flex;
+    gap: 20px;
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px dashed #ccc;
+}
+.current-img-box img {
+    width: 80px; height: 80px; object-fit: cover; border-radius: 6px; border: 1px solid #ddd; margin-top: 5px;
+}
+.current-img-box span, .new-img-box span {
+    display: block; font-size: 0.8rem; color: #666; margin-bottom: 4px;
+}
+
+.modal-footer {
+    padding: 16px 24px;
+    background: #f8f9fa;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+.btn-cancel {
+    padding: 10px 20px; border: 1px solid #ddd; background: #fff; border-radius: 8px; cursor: pointer; font-weight: 600; color: #555;
+}
+.btn-save {
+    padding: 10px 20px; background: #000; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;
+}

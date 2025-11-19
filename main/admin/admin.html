@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Elegance - Danh mục</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+
+  <link rel="stylesheet" href="ad_style.css">
+  <link rel="stylesheet" href="dialog/dialog_style.css"> 
+
+</head>
+<body>
+  <div class="site">
+    <header class="site-header">
+      <div class="container header-inner">
+        <div class="brand">
+          <span class="material-symbols-outlined logo-icon">storefront</span>
+          <span class="brand-title"><a href="admin.html">Elegance</a></span>
+        </div>
+
+        <nav class="main-nav">
+          <a href="#" id="btnQLSP">Quản Lí Sản Phẩm</a>
+          <a href="#" id="btnQLDH">Quản Lí Đơn Hàng</a>
+          <a href="#">Thêm Khuyến Mãi</a>
+        </nav>
+
+        <div class="header-actions">
+          <div class="search">
+            <span class="material-symbols-outlined">search</span>
+            <input type="text" placeholder="Tìm kiếm sản phẩm...">
+          </div>
+          <button class="icon-btn" title="Đăng xuất" onclick="window.location='../login/login.php'">
+            <span class="material-symbols-outlined">logout</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="container content">
+      <aside class="sidebar-left">
+        <h3>Bộ lọc <a class="clear" href="#">Xóa tất cả</a></h3>
+        <div class="filter-card">
+          <div class="filter-title">Danh mục</div>
+          <label><input type="checkbox"> Áo</label>
+          <label><input type="checkbox"> Quần</label>
+          <label><input type="checkbox"> Váy</label>
+          <label><input type="checkbox"> Đồ bộ</label>
+          <label><input type="checkbox"> Phụ kiện</label>
+          <label><input type="checkbox"> Giày dép</label>
+          <label><input type="checkbox"> Khác</label>
+        </div>
+        <div class="filter-card">
+            <div class="filter-title">Giá cả</div>
+            <label><input type="checkbox"> Dưới 50K</label>
+            <label><input type="checkbox"> 50K đến 100K</label>
+            <label><input type="checkbox"> Trên 100K</label>
+        </div>
+        <button class="apply-btn">Áp dụng</button>
+      </aside>
+
+      <section class="products">
+        <div class="products-top">
+          <div class="breadcrumbs">Trang chủ</div>
+          <div class="sort">
+            <label>Sắp xếp theo:</label>
+            <select>
+              <option>Giá: Thấp → Cao</option>
+              <option>Giá: Cao → Thấp</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="product-grid">
+          </div>
+
+        <div class="pagination">
+            <button>&lt;</button>
+            <button class="page active">1</button>
+            <button class="page">2</button>
+            <button class="page">3</button>
+            <button>&gt;</button>
+        </div>
+      </section>
+
+      <aside class="sidebar-right">
+        <div class="promo">
+          <h4>Khuyến Mãi Mùa</h4>
+          <p>Giảm giá tới 50% cho các sản phẩm chọn lọc!</p>
+          <button class="apply-btn small">Mua ngay</button>
+        </div>
+      </aside>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-inner">
+            <div class="brand">
+              <span class="material-symbols-outlined logo-icon">storefront</span>
+              <div><div class="brand-title">Elegance</div><div class="muted">Điểm đến của bạn cho thời trang hiện đại.</div></div>
+            </div>
+            <div class="footer-links">
+                <div><p class="footer-title">Chăm sóc khách hàng</p><ul><li><a href="#">Liên hệ</a></li><li><a href="#">Vận chuyển & Đổi trả</a></li></ul></div>
+                <div><p class="footer-title">Về chúng tôi</p><ul><li><a href="#">Câu chuyện</a></li><li><a href="#">Tuyển dụng</a></li></ul></div>
+                <div><p class="footer-title">Pháp lý</p><ul><li><a href="#">Điều khoản dịch vụ</a></li><li><a href="#">Chính sách bảo mật</a></li></ul></div>
+            </div>
+        </div>
+        <div class="copyright">© 2025 Nguyễn Đạt Tài DTH235759 DH24TH3.</div>
+    </footer>
+  </div>
+
+  <div id="dialog-container"></div>
+
+  <script src="ad_script.js" defer></script>
+  
+<script src="dialog/dialog_script.js"></script>
+  
+  <script>
+      fetch('dialog/ad_dialog.html')
+          .then(response => response.text())
+          .then(html => {
+              document.getElementById('dialog-container').innerHTML = html;
+              
+              initDialogEvents(); 
+          })
+          .catch(err => console.error('Lỗi tải dialog:', err));
+  </script>
+</body>
+</html>

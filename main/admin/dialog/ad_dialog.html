@@ -1,0 +1,161 @@
+<dialog id="modalQLSP" class="simple-dialog">
+  <form id="formSP" method="dialog" enctype="multipart/form-data">
+    <h2 style="margin-top:0;">Thêm sản phẩm</h2>
+
+    <label>Tên sản phẩm:</label>
+    <input type="text" id="sp_ten" name="ten_sp" required>
+
+    <label>Loại sản phẩm:</label>
+    <select id="sp_loai" name="loai_sp" required>
+      <option value="">— Chọn loại sản phẩm —</option>
+      <option value="Áo">Áo</option>
+      <option value="Quần">Quần</option>
+      <option value="Váy">Váy</option>
+      <option value="Đồ bộ">Đồ bộ</option>
+      <option value="Phụ kiện">Phụ kiện</option>
+      <option value="Giày dép">Giày dép</option>
+      <option value="Khác">Khác</option>
+    </select>
+
+    <label>Giới tính:</label>
+    <select id="sp_gt" name="gt_sp">
+      <option value="">— Chọn giới tính —</option>
+      <option value="Nam">Nam</option>
+      <option value="Nữ">Nữ</option>
+      <option value="Unisex">Unisex</option>
+    </select>
+
+    <label>Số lượng:</label>
+    <input type="number" id="sl_sp" min="0" name="soluong" required>
+
+    <label>Giá (VNĐ):</label>
+    <input type="number" id="sp_gia" min="0" name="gia" required>
+
+    <label>Chọn hình ảnh:</label>
+    <input type="file" id="sp_img" accept="image/*" name="file_name" required>
+
+    <label>Mô tả</label>
+    <textarea id="sp_mota" name="mo_ta" rows="3"></textarea>
+
+    <div class="dialog-actions">
+      <button type="button" id="closeModal" class="apply-btn small" style="background:#ccc;">Đóng</button>
+      <button type="submit" class="apply-btn small">Lưu</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="modalCTSP" class="detail-dialog">
+  <div class="detail-layout">
+    <img id="ctsp_img" src="" alt="Lỗi tải ảnh">
+    <div class="detail-info">
+      <h2 id="ctsp_ten"></h2>
+      <p><b>Loại:</b> <span id="ctsp_loai"></span></p>
+      <p><b>Giới tính:</b> <span id="ctsp_gt"></span></p>
+      <p><b>Số lượng:</b> <span id="ctsp_sl"></span></p>
+      <p><b>Giá:</b> <span id="ctsp_gia" style="color:#d00; font-weight:bold;"></span></p>
+      <p><b>Mô tả:</b></p>
+      <p id="ctsp_mota" style="white-space:pre-line;"></p>
+      <p><b>Ngày đăng:</b> <span id="ctsp_ngay"></span></p>
+    </div>
+  </div>
+  <div class="dialog-actions right">
+    <button id="btnSuaSP" class="apply-btn small">Sửa</button>
+    <button id="btnXoaSP" class="apply-btn small" style="background:#d9534f;">Xóa</button>
+    <button id="btnDongCTSP" class="apply-btn small" style="background:#666;">Đóng</button>
+  </div>
+</dialog>
+
+<dialog id="modalSuaSP" class="modern-modal">
+  <form id="formSuaSP" method="dialog">
+    <div class="modal-header">
+      <h2>Chỉnh sửa sản phẩm</h2>
+      <button type="button" class="close-btn" id="btnDongSua">&times;</button>
+    </div>
+
+    <div class="modal-body">
+      <input type="hidden" id="edit_id" name="id">
+      <div class="form-group full-width">
+        <label>Tên sản phẩm</label>
+        <input type="text" id="edit_ten" name="ten_sp" placeholder="Nhập tên sản phẩm..." required>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Loại sản phẩm</label>
+          <select id="edit_loai" name="loai_sp" required>
+             <option value="Áo">Áo</option>
+             <option value="Quần">Quần</option>
+             <option value="Váy">Váy</option>
+             <option value="Đồ bộ">Đồ bộ</option>
+             <option value="Phụ kiện">Phụ kiện</option>
+             <option value="Giày dép">Giày dép</option>
+             <option value="Khác">Khác</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Giới tính</label>
+          <select id="edit_gt" name="gt_sp">
+             <option value="Nam">Nam</option>
+             <option value="Nữ">Nữ</option>
+             <option value="Unisex">Unisex</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Giá (VNĐ)</label>
+          <input type="number" id="edit_gia" name="gia" min="0" required>
+        </div>
+        <div class="form-group">
+          <label>Số lượng kho</label>
+          <input type="number" id="edit_sl" name="soluong" min="0" required>
+        </div>
+      </div>
+      <div class="form-group full-width">
+        <label>Hình ảnh</label>
+        <div class="image-upload-container">
+          <div class="current-img-box">
+            <span>Hiện tại:</span>
+            <img id="edit_preview_old" src="" alt="Ảnh cũ">
+          </div>
+          <div class="new-img-box">
+            <span>Thay đổi (nếu cần):</span>
+            <input type="file" id="edit_img" name="hinh_anh" accept="image/*">
+          </div>
+        </div>
+      </div>
+      <div class="form-group full-width">
+        <label>Mô tả chi tiết</label>
+        <textarea id="edit_mota" name="mo_ta" rows="4"></textarea>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn-cancel" onclick="document.getElementById('modalSuaSP').close()">Hủy bỏ</button>
+      <button type="submit" class="btn-save">Lưu thay đổi</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="modalDuyetDon" class="modern-modal" style="width: 800px;">
+  <div class="modal-header">
+    <h2>Quản lý đơn hàng</h2>
+    <button type="button" class="close-btn" id="btnDongDonHang">&times;</button>
+  </div>
+
+  <div class="modal-body">
+    <table style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr style="background: #f0f0f0; text-align: left;">
+          <th style="padding: 10px;">Mã Đơn</th>
+          <th style="padding: 10px;">Khách hàng</th>
+          <th style="padding: 10px;">Tổng tiền</th>
+          <th style="padding: 10px;">Ngày đặt</th>
+          <th style="padding: 10px;">Trạng thái</th>
+          <th style="padding: 10px;">Hành động</th>
+        </tr>
+      </thead>
+      <tbody id="order-list">
+        </tbody>
+    </table>
+  </div>
+</dialog>

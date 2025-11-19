@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Elegance - Danh mục</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+
+  <link rel="stylesheet" href="user_style.css">
+</head>
+<body>
+  <div class="site">
+    <header class="site-header">
+      <div class="container header-inner">
+        <div class="brand">
+          <span class="material-symbols-outlined logo-icon">storefront</span>
+          <span class="brand-title"><a href="user.html">Elegance</a></span>
+        </div>
+
+        <nav class="main-nav">
+          <a href="#" onclick="filterGender('all', event)">Hàng Mới Về</a>
+          <a href="#" onclick="filterGender('Nam', event)">Nam</a>
+          <a href="#" onclick="filterGender('Nữ', event)">Nữ</a>
+          <a href="#" onclick="filterGender('Unisex', event)">Unisex</a>
+        </nav>
+
+        <div class="header-actions">
+          <div class="search">
+            <span class="material-symbols-outlined">search</span>
+            <input type="text" placeholder="Tìm kiếm sản phẩm...">
+          </div>
+          <button class="icon-btn" title="Đăng xuất" onclick="window.location='../logout.php'">
+            <span class="material-symbols-outlined">logout</span>
+          </button>
+
+          <button class="icon-btn notification-btn" id="btnThongBao" title="Thông báo">
+              <span class="material-symbols-outlined">notifications</span>
+              <span class="badge-dot" id="notif-badge" style="display:none;"></span>
+          </button>
+
+          <dialog id="modalThongBao" style="border:none; border-radius:12px; width:400px; padding:0; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
+              <div style="padding: 15px; border-bottom: 1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
+                  <h3 style="margin:0;">Thông báo đơn hàng</h3>
+                  <button id="closeNotif" style="background:none; border:none; font-size:20px; cursor:pointer;">&times;</button>
+              </div>
+              <div class="notif-list" style="padding: 0; max-height: 300px; overflow-y: auto;">
+                  <ul id="list-notif-content" style="list-style:none; padding:0; margin:0;"></ul>
+              </div>
+          </dialog>
+          
+          <button class="icon-btn cart" title="Giỏ hàng" onclick="window.location='gio_hang/cart.html'">
+            <span class="material-symbols-outlined">shopping_bag</span>
+            <span class="cart-count">0</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="container content">
+      <!-- Left sidebar (filters) -->
+      <aside class="sidebar-left">
+        <h3>Bộ lọc <a class="clear" href="#" id="btnClearFilter">Xóa tất cả</a></h3>
+        
+        <div class="filter-card">
+          <div class="filter-title">Danh mục</div>
+          <label><input type="checkbox" class="filter-cate" value="áo"> Áo</label>
+          <label><input type="checkbox" class="filter-cate" value="quần"> Quần</label>
+          <label><input type="checkbox" class="filter-cate" value="váy"> Váy</label>
+          <label><input type="checkbox" class="filter-cate" value="đồ bộ"> Đồ bộ</label>
+          <label><input type="checkbox" class="filter-cate" value="phụ kiện"> Phụ kiện</label>
+          <label><input type="checkbox" class="filter-cate" value="giày dép"> Giày dép</label>
+          <label><input type="checkbox" class="filter-cate" value="khác"> Khác</label>
+        </div>
+
+        <div class="filter-card">
+            <div class="filter-title">Giá cả</div>
+            <label><input type="checkbox" class="filter-price" value="under_50"> Dưới 50K</label>
+            <label><input type="checkbox" class="filter-price" value="50_100"> 50K đến 100K</label>
+            <label><input type="checkbox" class="filter-price" value="above_100"> Trên 100K</label>
+        </div>
+        
+        <button class="apply-btn" onclick="applySidebarFilters()">Áp dụng</button>
+      </aside>
+
+      <!-- Center: products -->
+      <section class="products">
+        <div class="products-top">
+          <div class="breadcrumbs">Trang chủ</div>
+          <div class="sort">
+            <label>Sắp xếp theo:</label>
+            <select>
+              <option>Phổ biến nhất</option>
+              <option>Giá: Thấp → Cao</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="product-grid">
+          <!-- hiển thị sản phẩm -->
+        </div>
+
+        <div class="pagination">
+          <button>&lt;</button>
+          <button class="page active">1</button>
+          <button class="page">2</button>
+          <button class="page">3</button>
+          <button>&gt;</button>
+        </div>
+      </section>
+
+      <!-- Right sidebar (promo + recommendations) -->
+      <aside class="sidebar-right">
+        <div class="promo">
+          <h4>Khuyến Mãi Mùa</h4>
+          <p>Giảm giá tới 50% cho các sản phẩm chọn lọc!</p>
+          <button class="apply-btn small">Mua ngay</button>
+        </div>
+      </aside>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <div class="brand">
+          <span class="material-symbols-outlined logo-icon">storefront</span>
+          <div>
+            <div class="brand-title">Elegance</div>
+            <div class="muted">Điểm đến của bạn cho thời trang hiện đại.</div>
+          </div>
+        </div>
+
+        <div class="footer-links">
+          <div>
+            <p class="footer-title">Chăm sóc khách hàng</p>
+            <ul>
+              <li><a href="#">Liên hệ</a></li>
+              <li><a href="#">Vận chuyển & Đổi trả</a></li>
+            </ul>
+          </div>
+          <div>
+            <p class="footer-title">Về chúng tôi</p>
+            <ul>
+              <li><a href="#">Câu chuyện</a></li>
+              <li><a href="#">Tuyển dụng</a></li>
+            </ul>
+          </div>
+          <div>
+            <p class="footer-title">Pháp lý</p>
+            <ul>
+              <li><a href="#">Điều khoản dịch vụ</a></li>
+              <li><a href="#">Chính sách bảo mật</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="copyright">© 2025 Nguyễn Đạt Tài DTH235759 DH24TH3.</div>
+    </footer>
+  </div>
+
+<dialog id="modalCTSP" style="border:none; border-radius:12px; width:650px; max-width:95%; padding:20px;">
+    <div style="display:flex; gap:20px; flex-wrap: wrap;">
+      
+      <div style="flex-shrink: 0;">
+        <img id="ctsp_img" src="" alt="Ảnh sản phẩm" style="width:250px; height:auto; border-radius:10px; object-fit:cover;">
+      </div>
+
+      <div style="flex:1; min-width: 250px;">
+        <h2 id="ctsp_ten" style="margin-top:0;"></h2>
+
+        <p><b>Loại:</b> <span id="ctsp_loai"></span></p>
+        <p><b>Giới tính:</b> <span id="ctsp_gt"></span></p>
+        <p><b>Số lượng kho:</b> <span id="ctsp_sl"></span></p>
+        <p><b>Giá:</b> <span id="ctsp_gia" style="color:#d00; font-size: 1.2rem; font-weight:bold;"></span></p>
+        
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 10px 0;">
+        
+        <p><b>Mô tả:</b></p>
+        <p id="ctsp_mota" style="white-space:pre-line; color: #555;"></p>
+        <p style="font-size: 0.85rem; color: #888;">Wait ngày đăng: <span id="ctsp_ngay"></span></p>
+      </div>
+
+    </div>
+
+    <div style="margin-top:20px; display:flex; justify-content:flex-end; gap:10px;">
+      <button id="btnThemVaoGio" class="apply-btn small" style="background-color: #000; color: #fff;">
+        <span class="material-symbols-outlined" style="font-size: 18px; vertical-align: bottom;">shopping_bag</span> 
+        Thêm vào giỏ hàng
+      </button>
+      <button id="btnDongCTSP" class="apply-btn small" style="background:#666; color: #fff;">Đóng</button>
+    </div>
+  </dialog>
+  <script src="user_script.js"></script>
+</body>
+</html>

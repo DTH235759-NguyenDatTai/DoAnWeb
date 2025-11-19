@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Elegance - Giỏ hàng</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+
+  <link rel="stylesheet" href="../user_style.css">
+  <link rel="stylesheet" href="cart_style.css"> 
+</head>
+<body>
+  <div class="site">
+    <header class="site-header">
+      <div class="container header-inner">
+        <div class="brand">
+          <span class="material-symbols-outlined logo-icon">storefront</span>
+          <span class="brand-title"><a href="../user.html">Elegance</a></span>
+        </div>
+
+        <nav class="main-nav">
+          <a href="../user.html">Hàng Mới Về</a>
+          <a href="#">Nam</a>
+          <a href="#">Nữ</a>
+          <a href="#">Khuyến Mãi</a>
+        </nav>
+
+        <div class="header-actions">
+          <div class="search">
+            <span class="material-symbols-outlined">search</span>
+            <input type="text" placeholder="Tìm kiếm sản phẩm...">
+          </div>
+          <button class="icon-btn"><span class="material-symbols-outlined">logout</span></button>
+
+          <button class="icon-btn notification-btn" id="btnThongBao" title="Thông báo">
+              <span class="material-symbols-outlined">notifications</span>
+              <span class="badge-dot" id="notif-badge" style="display:none;"></span>
+          </button>
+
+          <dialog id="modalThongBao" style="border:none; border-radius:12px; width:400px; padding:0; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
+              <div style="padding: 15px; border-bottom: 1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
+                  <h3 style="margin:0;">Thông báo đơn hàng</h3>
+                  <button id="closeNotif" style="background:none; border:none; font-size:20px; cursor:pointer;">&times;</button>
+              </div>
+              <div class="notif-list" style="padding: 0; max-height: 300px; overflow-y: auto;">
+                  <ul id="list-notif-content" style="list-style:none; padding:0; margin:0;"></ul>
+              </div>
+          </dialog>
+          <button class="icon-btn cart active">
+            <span class="material-symbols-outlined">shopping_bag</span>
+            <span class="cart-count">3</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="cart-container">
+      
+      <div class="breadcrumbs">Trang chủ / Giỏ hàng</div>
+      
+      <h1 class="page-title">Giỏ hàng của bạn</h1>
+
+      <div class="cart-layout">
+        
+        <div class="cart-items-section">
+          <div class="cart-header-row">
+            <span>SẢN PHẨM</span>
+            <span>SỐ LƯỢNG</span>
+          </div>
+
+          <div id="cart-list"></div>
+        </div>
+
+        <div class="cart-summary-section">
+          <div class="summary-card">
+            <h3>Tóm tắt đơn hàng</h3>
+            
+            <div class="summary-row">
+              <span>Tạm tính</span>
+              <span id="summary-subtotal">0₫</span>
+            </div>
+            <div class="summary-row">
+              <span>Phí vận chuyển</span>
+              <span id="summary-shipping">0₫</span>
+            </div>
+
+            <div class="summary-divider"></div>
+
+            <div class="summary-row total">
+              <span>Tổng cộng</span>
+              <span id="summary-total">0₫</span>
+            </div>
+
+            <div class="promo-input-group">
+                <label>Mã giảm giá</label>
+                <div class="input-wrapper">
+                    <input type="text" placeholder="Nhập mã giảm giá">
+                    <button>Áp dụng</button>
+                </div>
+            </div>
+
+            <button class="btn-checkout">Tiến hành thanh toán</button>
+            
+            <p class="shipping-note">Miễn phí vận chuyển cho đơn hàng từ 500.000₫</p>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <div class="brand">
+          <span class="material-symbols-outlined logo-icon">storefront</span>
+          <div>
+            <div class="brand-title">Elegance</div>
+            <div class="muted">Điểm đến của bạn cho thời trang hiện đại.</div>
+          </div>
+        </div>
+
+        <div class="footer-links">
+          <div>
+            <p class="footer-title">Chăm sóc khách hàng</p>
+            <ul>
+              <li><a href="#">Liên hệ</a></li>
+              <li><a href="#">Vận chuyển & Đổi trả</a></li>
+            </ul>
+          </div>
+          <div>
+            <p class="footer-title">Về chúng tôi</p>
+            <ul>
+              <li><a href="#">Câu chuyện</a></li>
+              <li><a href="#">Tuyển dụng</a></li>
+            </ul>
+          </div>
+          <div>
+            <p class="footer-title">Pháp lý</p>
+            <ul>
+              <li><a href="#">Điều khoản dịch vụ</a></li>
+              <li><a href="#">Chính sách bảo mật</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="copyright">© 2025 Nguyễn Đạt Tài DTH235759 DH24TH3.</div>
+    </footer>
+  </div>
+  <script src="cart_script.js"></script>
+</body>
+</html>
