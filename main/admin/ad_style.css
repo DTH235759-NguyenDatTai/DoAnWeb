@@ -462,24 +462,15 @@ copyright {
   border-bottom-left-radius: 16px;
   border-bottom-right-radius: 16px;
 }
-.btn-approve{
-    padding: 10px 20px;
-    border: 1px solid #ddd;
-    background: #28d125;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    color: #555;
-}
 
-.btn-cancel{
-    padding: 10px 20px;
-    border: 1px solid #ddd;
-    background: #7e0f0f;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    color: #555;
+.btn-cancel {
+  padding: 10px 20px;
+  border: 1px solid #ddd;
+  background: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  color: #555;
 }
 
 .btn-save {

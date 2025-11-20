@@ -172,6 +172,7 @@ body {
 }
 
 .filter-title {
+    color: red;
     font-weight: 600;
     margin-bottom: 8px;
 }
@@ -180,6 +181,7 @@ body {
     display: block;
     margin: 6px 0;
     font-size: 14px;
+    color: red;
 }
 
 /* Apply button */

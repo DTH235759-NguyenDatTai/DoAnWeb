@@ -1,140 +1,96 @@
-// ------------------------------
-// CONSTANTS
-// ------------------------------
-const ITEMS_PER_PAGE = 9;
-const API = {
-    LIST: "product/get_products.php",
-    DETAIL: id => `product/get_product_by_id.php?id=${id}`
+// ============================================================
+// ad_script.js - Chỉ xử lý hiển thị danh sách
+// ============================================================
+let currentPage = 1;
+let itemsPerPage = 9;
+let productList = [];
+
+// Load trang
+window.onload = () => {
+    loadProducts();
 };
 
-// ------------------------------
-// STATE
-// ------------------------------
-let currentPage = 1;
-let productList = [];
-let filteredList = []; // danh sách sau khi tìm kiếm
-
-// ------------------------------
-// INIT
-// ------------------------------
-window.onload = () => loadProducts();
-
-/**
- * Fetch toàn bộ sản phẩm từ server
- */
 async function loadProducts() {
     try {
-        const res = await fetch(API.LIST);
-        const data = await res.json();
-
-        if (!data.success) return console.error("Không load được sản phẩm");
-
-        productList = data.data;
-        filteredList = [...productList];
-
-        renderProducts();
-        renderPagination();
-    } catch (err) {
-        console.error("Lỗi load SP:", err);
-    }
+        let res = await fetch("product/get_products.php");
+        let data = await res.json();
+        if (data.success) {
+            productList = data.data;
+            renderProducts();
+            renderPagination();
+        }
+    } catch (err) { console.error("Lỗi load SP:", err); }
 }
 
-/**
- * Tạo URL ảnh sản phẩm
- */
-function getImageSource(sp) {
-    return sp.img_url || `uploads/${sp.hinh_anh}`;
-}
-
-/**
- * Tạo 1 thẻ card HTML
- */
-function createProductCard(sp) {
-    const img = getImageSource(sp);
-    return `
-        <div class="card" data-id="${sp.id}">
-            <img src="${img}" alt="${sp.ten_sp}">
-            <h4>${sp.ten_sp}</h4>
-            <p class="price">${Number(sp.gia).toLocaleString()}₫</p>
-        </div>
-    `;
-}
-
-/**
- * Render danh sách sản phẩm theo trang
- */
 function renderProducts() {
-    const grid = document.querySelector(".product-grid");
+    let grid = document.querySelector(".product-grid");
     if (!grid) return;
-
     grid.innerHTML = "";
 
-    const start = (currentPage - 1) * ITEMS_PER_PAGE;
-    const items = filteredList.slice(start, start + ITEMS_PER_PAGE);
+    let start = (currentPage - 1) * itemsPerPage;
+    let items = productList.slice(start, start + itemsPerPage);
 
-    grid.innerHTML = items.map(createProductCard).join("");
+    items.forEach(sp => {
+        let imgSrc = sp.img_url ? sp.img_url : "uploads/" + sp.hinh_anh;
+        let card = `
+            <div class="card" data-id="${sp.id}" style="cursor: pointer;">
+                <img src="${imgSrc}" alt="${sp.ten_sp}">
+                <h4>${sp.ten_sp}</h4>
+                <p class="price">${Number(sp.gia).toLocaleString()}₫</p>
+            </div>
+        `;
+        grid.innerHTML += card;
+    });
 
-    // Event Delegation - không dùng setTimeout
-    grid.onclick = e => {
-        const card = e.target.closest(".card");
-        if (card) openProductDetail(card.dataset.id);
-    };
+    // Gắn sự kiện click
+    setTimeout(() => {
+        document.querySelectorAll(".card").forEach(card => {
+            card.addEventListener("click", () => openProductDetail(card.dataset.id));
+        });
+    }, 0);
 }
 
-/**
- * Render thanh phân trang
- */
 function renderPagination() {
-    const pag = document.querySelector(".pagination");
+    let pag = document.querySelector(".pagination");
     if (!pag) return;
 
-    const totalPage = Math.ceil(filteredList.length / ITEMS_PER_PAGE);
+    let totalPage = Math.ceil(productList.length / itemsPerPage);
     pag.innerHTML = "";
 
-    const createBtn = (page, label, disabled = false) =>
-        `<button onclick="changePage(${page})" ${disabled ? "disabled" : ""}>${label}</button>`;
-
     // Prev
-    pag.innerHTML += createBtn(currentPage - 1, "&lt;", currentPage === 1);
+    pag.innerHTML += `<button onclick="changePage(${currentPage - 1})" ${currentPage == 1 ? "disabled" : ""}>&lt;</button>`;
 
-    // Page numbers
+    // Pages
     for (let i = 1; i <= totalPage; i++) {
         pag.innerHTML += `
-            <button class="page ${i === currentPage ? "active" : ""}"
-                    onclick="changePage(${i})">${i}</button>`;
+            <button class="page ${i == currentPage ? "active" : ""}" onclick="changePage(${i})">
+                ${i}
+            </button>
+        `;
     }
 
     // Next
-    pag.innerHTML += createBtn(currentPage + 1, "&gt;", currentPage === totalPage);
+    pag.innerHTML += `<button onclick="changePage(${currentPage + 1})" ${currentPage == totalPage ? "disabled" : ""}>&gt;</button>`;
 }
 
-/**
- * Đổi trang
- */
 function changePage(page) {
-    const totalPage = Math.ceil(filteredList.length / ITEMS_PER_PAGE);
+    // (Giữ nguyên code đổi trang cũ)
+    let totalPage = Math.ceil(productList.length / itemsPerPage);
     if (page < 1 || page > totalPage) return;
-
     currentPage = page;
     renderProducts();
     renderPagination();
 }
 
-/**
- * Mở modal chi tiết sản phẩm
- */
 async function openProductDetail(id) {
-    try {
-        const res = await fetch(API.DETAIL(id));
-        const data = await res.json();
+    let res = await fetch("product/get_product_by_id.php?id=" + id);
+    let data = await res.json();
+    if (data.success) {
+        let sp = data.data;
+        let imgSrc = sp.img_url ? sp.img_url : "uploads/" + sp.hinh_anh;
 
-        if (!data.success) return alert("Không tìm thấy sản phẩm");
-
-        const sp = data.data;
-        const img = getImageSource(sp);
-
-        // Fill UI
-        document.getElementById("ctsp_img").src = img;
+        // Điền thông tin
+        document.getElementById("ctsp_img").src = imgSrc;
         document.getElementById("ctsp_ten").innerText = sp.ten_sp;
         document.getElementById("ctsp_loai").innerText = sp.loai_sp;
         document.getElementById("ctsp_gt").innerText = sp.gt_sp;
@@ -143,38 +99,27 @@ async function openProductDetail(id) {
         document.getElementById("ctsp_mota").innerText = sp.mo_ta;
         document.getElementById("ctsp_ngay").innerText = sp.ngay_dang;
 
-        // Gán ID cho nút sửa/xóa nếu tồn tại
-        document.getElementById("btnSuaSP")?.setAttribute("data-id", id);
-        document.getElementById("btnXoaSP")?.setAttribute("data-id", id);
+        // Gán ID cho nút Sửa/Xóa để file dialog_script.js dùng
+        // Kiểm tra null để tránh lỗi nếu dialog chưa load kịp (hiếm khi xảy ra)
+        if(document.getElementById("btnSuaSP")) document.getElementById("btnSuaSP").dataset.id = id;
+        if(document.getElementById("btnXoaSP")) document.getElementById("btnXoaSP").dataset.id = id;
 
         document.getElementById("modalCTSP").showModal();
-    } catch (err) {
-        console.error("Lỗi load chi tiết:", err);
     }
 }
 
-// ------------------------------
-// SEARCH PRODUCT
-// -----------------------------
+// ============================================================
+//  SEARCH PRODUCT
+// ============================================================
+document.getElementById("searchInput")?.addEventListener("input", function () {
+    const keyword = this.value.toLowerCase().trim();
 
-function applySearch() {
-    const keyword = document.getElementById("searchInput")?.value.toLowerCase().trim() || "";
-
-    // Nếu ô tìm kiếm trống → hiện toàn bộ sản phẩm
-    if (keyword === "") {
-        filteredList = [...productList];
-    } else {
-        filteredList = productList.filter(sp =>
-            sp.ten_sp.toLowerCase().includes(keyword) ||
-            sp.loai_sp.toLowerCase().includes(keyword) ||
-            sp.gt_sp.toLowerCase().includes(keyword)
-        );
-    }
+    filteredList = productList.filter(sp =>
+        sp.ten_sp.toLowerCase().includes(keyword) ||
+        sp.loai_sp.toLowerCase().includes(keyword)
+    );
 
     currentPage = 1;
     renderProducts();
     renderPagination();
-}
-
-// Lắng nghe sự kiện nhập tìm kiếm
-document.getElementById("searchInput")?.addEventListener("input", applySearch);
+});

@@ -6,7 +6,25 @@ error_reporting(E_ALL);
 // Trả về JSON thuần
 header("Content-Type: application/json; charset=UTF-8");
 
-require_once "db_connect.php";
+session_start();
+
+$host = "localhost";
+$user = "root";
+$pass = "vertrigo";
+$dbname = "qlquanao";
+
+// Kết nối DB
+$conn = new mysqli($host, $user, $pass, $dbname);
+
+if ($conn->connect_error) {
+    echo json_encode([
+        'success' => false,
+        'message' => "Kết nối database thất bại: " . $conn->connect_error
+    ]);
+    exit;
+}
+
+$conn->set_charset("utf8mb4");
 
 // Kiểm tra ID
 if (!isset($_GET['id'])) {

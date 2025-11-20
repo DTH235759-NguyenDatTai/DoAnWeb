@@ -1,87 +1,74 @@
 <?php
+header("Content-Type: application/json; charset=UTF-8");
+
+// Kết nối database
 session_start();
 header("Content-Type: application/json; charset=UTF-8");
-require_once "db_connect.php";
+$host = "localhost";
+$user = "root";
+$pass = "vertrigo";
+$dbname = "qlquanao";
 
-// Chỉ nhận POST
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    echo json_encode(['success' => false, 'message' => "Phương thức không hợp lệ"]);
+$conn = new mysqli($host, $user, $pass, $dbname);
+
+// Kiểm tra kết nối
+if ($conn->connect_error) {
+    // Trường hợp kết nối thất bại, trả về lỗi JSON cho AJAX call
+    http_response_code(500);
+    echo json_encode(['success' => false, 'message' => "Kết nối database thất bại: " . $conn->connect_error]);
     exit();
 }
 
-// ===============================
-// VALIDATE INPUT
-// ===============================
-$ten_sp  = trim($_POST['ten_sp'] ?? '');
-$loai_sp = trim($_POST['loai_sp'] ?? '');
-$gt_sp   = trim($_POST['gt_sp'] ?? '');
-$soluong = intval($_POST['soluong'] ?? 0);
-$gia     = floatval($_POST['gia'] ?? 0);
-$mo_ta   = trim($_POST['mo_ta'] ?? '');
+// Thiết lập bộ ký tự
+$conn->set_charset("utf8mb4");
 
-if ($ten_sp === "" || $loai_sp === "" || $gt_sp === "") {
-    echo json_encode(['success' => false, 'message' => "Vui lòng nhập đầy đủ thông tin"]);
-    exit;
-}
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-// ===============================
-// UPLOAD ẢNH
-// ===============================
-$uploadDir ="../uploads/";
-if (!is_dir($uploadDir)) {
-    mkdir($uploadDir, 0777, true);
-}
+    $ten_sp  = $_POST['ten_sp'] ?? '';
+    $loai_sp = $_POST['loai_sp'] ?? '';
+    $gt_sp   = $_POST['gt_sp'] ?? '';
+    $soluong = $_POST['soluong'] ?? 0;
+    $gia     = $_POST['gia'] ?? 0;
+    $mo_ta   = $_POST['mo_ta'] ?? '';
 
-$file_name = null;
+    // =============================
+    // 1. Xử lý upload ảnh
+    // =============================
+    if (isset($_FILES['hinh_anh']) && $_FILES['hinh_anh']['error'] === 0) {
 
-if (isset($_FILES['hinh_anh']) && $_FILES['hinh_anh']['error'] == 0) {
+        $folder = "../uploads/";
+        if (!is_dir($folder)) {
+            mkdir($folder, 0777, true);
+        }
 
-    $validTypes = ['image/jpeg', 'image/png', 'image/webp'];
-    if (!in_array($_FILES['hinh_anh']['type'], $validTypes)) {
-        echo json_encode(['success' => false, 'message' => "Chỉ chấp nhận file JPG, PNG, WEBP"]);
-        exit;
+        $file_name = time() . "_" . basename($_FILES['hinh_anh']['name']);
+        $target = $folder . $file_name;
+
+        if (!move_uploaded_file($_FILES['hinh_anh']['tmp_name'], $target)) {
+            echo json_encode(["success" => false, "message" => "Không thể upload hình ảnh"]);
+            exit;
+        }
+    } else {
+        $file_name = null;
     }
 
-    if ($_FILES['hinh_anh']['size'] > 5 * 1024 * 1024) {
-        echo json_encode(['success' => false, 'message' => "File quá lớn (tối đa 5MB)"]);
-        exit;
+    // =============================
+    // 2. Thêm vào database
+    // =============================
+    $stmt = $conn->prepare("
+        INSERT INTO sanpham (ten_sp, loai_sp, soluong, gt_sp, gia, hinh_anh, mo_ta)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    ");
+    $stmt->bind_param("ssisdss", $ten_sp, $loai_sp, $soluong, $gt_sp, $gia, $file_name, $mo_ta);
+
+    if ($stmt->execute()) {
+        echo json_encode(["success" => true, "message" => "Thêm sản phẩm thành công"]);
+    } else {
+        echo json_encode(["success" => false, "message" => "Lỗi SQL: " . $stmt->error]);
     }
 
-    $file_name = time() . "_" . basename($_FILES['hinh_anh']['name']);
-    $target = $uploadDir . $file_name;
-
-    if (!move_uploaded_file($_FILES['hinh_anh']['tmp_name'], $target)) {
-        echo json_encode(['success' => false, 'message' => "Không thể upload ảnh"]);
-        exit;
-    }
+    $stmt->close();
 }
 
-// ===============================
-// INSERT DATABASE
-// ===============================
-$sql = "
-    INSERT INTO sanpham (ten_sp, loai_sp, soluong, gt_sp, gia, hinh_anh, mo_ta)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
-";
-
-$stmt = $conn->prepare($sql);
-$stmt->bind_param(
-    "ssissss",
-    $ten_sp,
-    $loai_sp,
-    $soluong,
-    $gt_sp,
-    $gia,
-    $file_name,
-    $mo_ta
-);
-
-if ($stmt->execute()) {
-    echo json_encode(['success' => true, 'message' => "Thêm sản phẩm thành công"]);
-} else {
-    echo json_encode(['success' => false, 'message' => "Lỗi SQL: " . $stmt->error]);
-}
-
-$stmt->close();
 $conn->close();
 ?>

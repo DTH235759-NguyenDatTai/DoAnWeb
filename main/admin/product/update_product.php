@@ -6,7 +6,24 @@ ini_set('display_errors', 0);
 error_reporting(E_ALL);
 
 header("Content-Type: application/json; charset=UTF-8");
-require_once "db_connect.php";
+
+// Kết nối Database
+$host = "localhost";
+$user = "root";
+$pass = "vertrigo";
+$dbname = "qlquanao";
+
+$conn = new mysqli($host, $user, $pass, $dbname);
+
+if ($conn->connect_error) {
+    echo json_encode([
+        'success' => false, 
+        'message' => "Lỗi kết nối DB: " . $conn->connect_error
+    ]);
+    exit;
+}
+
+$conn->set_charset("utf8mb4");
 
 // Chỉ nhận method POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
