@@ -160,7 +160,7 @@
     </footer>
   </div>
 
-<dialog id="modalCTSP" style="border:none; border-radius:12px; width:650px; max-width:95%; padding:20px;">
+  <dialog id="modalCTSP" style="border:none; border-radius:12px; width:650px; max-width:95%; padding:20px;">
     <div style="display:flex; gap:20px; flex-wrap: wrap;">
       
       <div style="flex-shrink: 0;">
@@ -192,6 +192,47 @@
       <button id="btnDongCTSP" class="apply-btn small" style="background:#666; color: #fff;">Đóng</button>
     </div>
   </dialog>
+  <button
+    type="button"
+    class="chatbot-fab"
+    id="chatbotFab"
+    title="Mo chatbot"
+    aria-label="Mo chatbot"
+  >
+    <span class="material-symbols-outlined">smart_toy</span>
+  </button>
+
+  <section class="chatbot-widget hidden" id="chatbotWidget" aria-hidden="true">
+    <div class="chatbot-header">
+      <div>
+        <p class="chatbot-eyebrow">Watch assistant</p>
+        <h3>WatchBot</h3>
+      </div>
+      <button type="button" class="chatbot-close" id="chatbotClose" aria-label="Dong chatbot">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <div class="chatbot-quick-actions">
+      <button type="button" class="chatbot-quick-btn" data-chatbot-message="xem san pham">Xem san pham</button>
+      <button type="button" class="chatbot-quick-btn" data-chatbot-message="gia re">Gia re</button>
+      <button type="button" class="chatbot-quick-btn" data-chatbot-message="smartwatch">Smartwatch</button>
+    </div>
+
+    <div class="chatbot-messages" id="chatbotMessages" aria-live="polite"></div>
+
+    <form class="chatbot-form" id="chatbotForm">
+      <label class="sr-only" for="chatbotInput">Nhap noi dung chat</label>
+      <input
+        id="chatbotInput"
+        type="text"
+        name="message"
+        placeholder="Nhap ten dong ho ban can tim..."
+        autocomplete="off"
+      >
+      <button type="submit" id="chatbotSend">Gui</button>
+    </form>
+  </section>
   <script src="user_script.js"></script>
 </body>
 </html>

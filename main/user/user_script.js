@@ -43,6 +43,9 @@ window.onload = () => {
             applySidebarFilters();
         };
     }
+
+    // 7. Khoi tao chatbot noi
+    initChatbot();
 };
 
 // ============================================================
@@ -426,3 +429,222 @@ document.getElementById("searchInput")?.addEventListener("input", function () {
     renderProducts();
     renderPagination();
 });
+
+// ============================================================
+// FLOATING CHATBOT
+// ============================================================
+function initChatbot() {
+    const chatbotWidget = document.getElementById("chatbotWidget");
+    const chatbotFab = document.getElementById("chatbotFab");
+    const chatbotClose = document.getElementById("chatbotClose");
+    const chatbotForm = document.getElementById("chatbotForm");
+    const chatbotInput = document.getElementById("chatbotInput");
+    const chatbotMessages = document.getElementById("chatbotMessages");
+    const chatbotSend = document.getElementById("chatbotSend");
+    const chatbotQuickButtons = document.querySelectorAll(".chatbot-quick-btn");
+    const openChatbotLink = document.getElementById("openChatbotLink");
+
+    if (!chatbotWidget || !chatbotFab || !chatbotForm || !chatbotInput || !chatbotMessages || !chatbotSend) {
+        return;
+    }
+
+    let chatbotInitialized = false;
+
+    function normalizeVietnamese(text) {
+        return text
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/\u0111/g, "d")
+            .trim();
+    }
+
+    function formatChatbotPrice(price) {
+        return Number(price || 0).toLocaleString("vi-VN") + " VND";
+    }
+
+    function scrollChatbotToBottom() {
+        chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+    }
+
+    function setChatbotBusyState(isBusy) {
+        chatbotSend.disabled = isBusy;
+        chatbotInput.disabled = isBusy;
+        chatbotQuickButtons.forEach((button) => {
+            button.disabled = isBusy;
+        });
+    }
+
+    function createChatbotMessage(role, text, products = []) {
+        const row = document.createElement("div");
+        row.className = `chatbot-row ${role}`;
+
+        const bubble = document.createElement("div");
+        bubble.className = "chatbot-bubble";
+
+        const name = document.createElement("span");
+        name.className = "chatbot-name";
+        name.textContent = role === "user" ? "Ban" : "Bot";
+
+        const messageText = document.createElement("p");
+        messageText.className = "chatbot-text";
+        messageText.textContent = text;
+
+        bubble.append(name, messageText);
+
+        if (Array.isArray(products) && products.length > 0) {
+            const list = document.createElement("div");
+            list.className = "chatbot-product-list";
+
+            products.forEach((product) => {
+                const card = document.createElement("article");
+                card.className = "chatbot-product-card";
+
+                const title = document.createElement("h4");
+                title.textContent = product.name || "San pham";
+
+                const meta = document.createElement("span");
+                meta.className = "chatbot-product-meta";
+                meta.textContent = product.category || "Khong ro danh muc";
+
+                const price = document.createElement("p");
+                price.className = "chatbot-product-price";
+                price.textContent = formatChatbotPrice(product.price);
+
+                card.append(title, meta, price);
+                list.appendChild(card);
+            });
+
+            bubble.appendChild(list);
+        }
+
+        row.appendChild(bubble);
+        return row;
+    }
+
+    function appendChatbotMessage(role, text, products = []) {
+        const message = createChatbotMessage(role, text, products);
+        chatbotMessages.appendChild(message);
+        scrollChatbotToBottom();
+        return message;
+    }
+
+    function createTypingMessage() {
+        const row = document.createElement("div");
+        row.className = "chatbot-row bot";
+
+        const bubble = document.createElement("div");
+        bubble.className = "chatbot-bubble";
+
+        const name = document.createElement("span");
+        name.className = "chatbot-name";
+        name.textContent = "Bot";
+
+        const dots = document.createElement("div");
+        dots.className = "chatbot-typing";
+
+        for (let i = 0; i < 3; i += 1) {
+            dots.appendChild(document.createElement("span"));
+        }
+
+        bubble.append(name, dots);
+        row.appendChild(bubble);
+        chatbotMessages.appendChild(row);
+        scrollChatbotToBottom();
+        return row;
+    }
+
+    function openChatbot() {
+        chatbotWidget.classList.remove("hidden");
+        chatbotWidget.setAttribute("aria-hidden", "false");
+        chatbotFab.style.display = "none";
+
+        if (!chatbotInitialized) {
+            appendChatbotMessage(
+                "bot",
+                "Xin chao, minh co the giup ban xem san pham, loc gia re, tim smartwatch hoac tim dong ho theo ten."
+            );
+            chatbotInitialized = true;
+        }
+
+        chatbotInput.focus();
+        scrollChatbotToBottom();
+    }
+
+    function closeChatbot() {
+        chatbotWidget.classList.add("hidden");
+        chatbotWidget.setAttribute("aria-hidden", "true");
+        chatbotFab.style.display = "inline-flex";
+    }
+
+    async function sendChatbotMessage(rawMessage) {
+        const originalMessage = rawMessage.trim();
+        if (!originalMessage) return;
+
+        appendChatbotMessage("user", originalMessage);
+        chatbotInput.value = "";
+        setChatbotBusyState(true);
+
+        const typingMessage = createTypingMessage();
+        const normalizedMessage = normalizeVietnamese(originalMessage);
+        const fakeDelay = 300 + Math.floor(Math.random() * 201);
+
+        try {
+            const request = fetch("../AI/chat.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
+                },
+                body: new URLSearchParams({
+                    message: normalizedMessage,
+                    original_message: originalMessage
+                })
+            });
+
+            const [response] = await Promise.all([
+                request,
+                new Promise((resolve) => setTimeout(resolve, fakeDelay))
+            ]);
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.reply || "Khong the xu ly yeu cau luc nay.");
+            }
+
+            typingMessage.remove();
+            appendChatbotMessage(
+                "bot",
+                data.reply || "Minh chua co cau tra loi phu hop.",
+                data.products || []
+            );
+        } catch (error) {
+            typingMessage.remove();
+            appendChatbotMessage(
+                "bot",
+                error.message || "Da co loi xay ra. Vui long thu lai sau."
+            );
+        } finally {
+            setChatbotBusyState(false);
+            chatbotInput.focus();
+        }
+    }
+
+    chatbotFab.addEventListener("click", openChatbot);
+    chatbotClose?.addEventListener("click", closeChatbot);
+    openChatbotLink?.addEventListener("click", (event) => {
+        event.preventDefault();
+        openChatbot();
+    });
+
+    chatbotForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        sendChatbotMessage(chatbotInput.value);
+    });
+
+    chatbotQuickButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+            sendChatbotMessage(button.dataset.chatbotMessage || "");
+        });
+    });
+}
