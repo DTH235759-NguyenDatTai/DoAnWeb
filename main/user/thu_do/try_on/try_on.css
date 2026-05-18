@@ -1,0 +1,136 @@
+.tryon-container {
+
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+    padding: 20px;
+}
+
+.controls,
+.cart-items {
+
+    width: 260px;
+}
+
+.controls label {
+
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.controls input,
+.controls select {
+
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+.controls button {
+
+    width: 100%;
+    padding: 12px;
+    margin-top: 15px;
+    border: none;
+    background: #137fec;
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.remove-btn {
+
+    background: #ff4d4f !important;
+}
+
+.model-box {
+
+    position: relative;
+    width: 320px;
+    height: 650px;
+    overflow: hidden;
+    background: #f5f5f5;
+    border-radius: 20px;
+    border: 1px solid #ddd;
+}
+
+#model {
+
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.clothes-layer {
+
+    position: absolute;
+    pointer-events: none;
+}
+
+#shirtLayer {
+
+    top: 110px;
+    left: 27px;
+    width: 82%;
+}
+
+#pantsLayer {
+
+    top: 280px;
+    left: 38px;
+    width: 75%;
+}
+
+#shoesLayer {
+
+    top: 520px;
+    left: 67px;
+    width: 55%;
+}
+
+.try-item {
+
+    display: flex;
+    gap: 10px;
+    background: white;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    border: 1px solid #eee;
+}
+
+.try-item img {
+
+    width: 70px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.try-item h4 {
+
+    margin: 0;
+    font-size: 14px;
+}
+
+.try-item p {
+
+    margin: 5px 0;
+    font-size: 13px;
+    color: #666;
+}
+
+.try-item button {
+
+    padding: 7px 12px;
+    border: none;
+    background: #137fec;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+}
