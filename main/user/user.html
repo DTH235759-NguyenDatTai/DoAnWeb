@@ -11,6 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
 
   <link rel="stylesheet" href="user_style.css">
+  <link rel="stylesheet" href="../assets/css/chatbot.css">
 </head>
 <body>
   <div class="site">
@@ -203,8 +204,8 @@
     type="button"
     class="chatbot-fab"
     id="chatbotFab"
-    title="Mo chatbot"
-    aria-label="Mo chatbot"
+    title="Mở chatbot"
+    aria-label="Mở chatbot"
   >
     <span class="material-symbols-outlined">smart_toy</span>
   </button>
@@ -212,34 +213,35 @@
   <section class="chatbot-widget hidden" id="chatbotWidget" aria-hidden="true">
     <div class="chatbot-header">
       <div>
-        <p class="chatbot-eyebrow">Watch assistant</p>
-        <h3>WatchBot</h3>
+        <p class="chatbot-eyebrow">Trợ lý cửa hàng</p>
+        <h3>Chatbot tư vấn</h3>
       </div>
-      <button type="button" class="chatbot-close" id="chatbotClose" aria-label="Dong chatbot">
+      <button type="button" class="chatbot-close" id="chatbotClose" aria-label="Đóng chatbot">
         <span class="material-symbols-outlined">close</span>
       </button>
     </div>
 
     <div class="chatbot-quick-actions">
-      <button type="button" class="chatbot-quick-btn" data-chatbot-message="xem san pham">Xem san pham</button>
-      <button type="button" class="chatbot-quick-btn" data-chatbot-message="gia re">Gia re</button>
-      <button type="button" class="chatbot-quick-btn" data-chatbot-message="smartwatch">Smartwatch</button>
+      <button type="button" class="chatbot-quick-btn" data-chatbot-message="Có áo nam nào còn hàng không?">Áo nam</button>
+      <button type="button" class="chatbot-quick-btn" data-chatbot-message="Sản phẩm giá rẻ dưới 50k">Dưới 50K</button>
+      <button type="button" class="chatbot-quick-btn" data-chatbot-message="Chính sách đổi trả">Đổi trả</button>
     </div>
 
     <div class="chatbot-messages" id="chatbotMessages" aria-live="polite"></div>
 
     <form class="chatbot-form" id="chatbotForm">
-      <label class="sr-only" for="chatbotInput">Nhap noi dung chat</label>
+      <label class="sr-only" for="chatbotInput">Nhập câu hỏi chatbot</label>
       <input
         id="chatbotInput"
         type="text"
         name="message"
-        placeholder="Nhap ten dong ho ban can tim..."
+        placeholder="Hỏi về sản phẩm, giá, tồn kho..."
         autocomplete="off"
       >
-      <button type="submit" id="chatbotSend">Gui</button>
+      <button type="submit" id="chatbotSend">Gửi</button>
     </form>
   </section>
   <script src="user_script.js"></script>
+  <script src="../assets/js/chatbot.js"></script>
 </body>
 </html>

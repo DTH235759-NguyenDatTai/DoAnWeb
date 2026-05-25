@@ -1,0 +1,215 @@
+/* Giao dien chatbot noi - co the dung chung cho nhieu trang */
+.chatbot-fab {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    width: 58px;
+    height: 58px;
+    border: 0;
+    border-radius: 50%;
+    background: #111827;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 14px 34px rgba(17, 24, 39, 0.28);
+    cursor: pointer;
+    z-index: 1000;
+}
+
+.chatbot-fab .material-symbols-outlined {
+    font-size: 28px;
+}
+
+.chatbot-widget {
+    position: fixed;
+    right: 24px;
+    bottom: 94px;
+    width: min(380px, calc(100vw - 32px));
+    height: min(620px, calc(100vh - 130px));
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.24);
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+    overflow: hidden;
+    z-index: 1000;
+}
+
+.chatbot-widget.hidden {
+    display: none;
+}
+
+.chatbot-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px;
+    background: #111827;
+    color: #fff;
+}
+
+.chatbot-header h3,
+.chatbot-eyebrow {
+    margin: 0;
+}
+
+.chatbot-header h3 {
+    font-size: 18px;
+    line-height: 1.25;
+}
+
+.chatbot-eyebrow {
+    margin-bottom: 3px;
+    font-size: 12px;
+    color: #cbd5e1;
+}
+
+.chatbot-close {
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.chatbot-quick-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 12px 14px;
+    border-bottom: 1px solid #eef2f7;
+}
+
+.chatbot-quick-btn {
+    min-height: 32px;
+    padding: 0 11px;
+    border: 1px solid #d1d5db;
+    border-radius: 999px;
+    background: #f9fafb;
+    color: #111827;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.chatbot-messages {
+    padding: 14px;
+    overflow-y: auto;
+    background: #f8fafc;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.chatbot-row {
+    display: flex;
+}
+
+.chatbot-row.user {
+    justify-content: flex-end;
+}
+
+.chatbot-bubble {
+    max-width: 88%;
+    padding: 11px 13px;
+    border-radius: 14px;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    color: #111827;
+}
+
+.chatbot-row.user .chatbot-bubble {
+    background: #111827;
+    border-color: #111827;
+    color: #fff;
+}
+
+.chatbot-name {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 12px;
+    font-weight: 700;
+    opacity: 0.78;
+}
+
+.chatbot-text {
+    margin: 0;
+    white-space: pre-wrap;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.chatbot-form {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+    padding: 13px 14px 14px;
+    border-top: 1px solid #e5e7eb;
+    background: #fff;
+}
+
+.chatbot-form input {
+    width: 100%;
+    min-height: 44px;
+    padding: 0 13px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    outline: none;
+    font: inherit;
+}
+
+.chatbot-form input:focus {
+    border-color: #111827;
+    box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.12);
+}
+
+.chatbot-form button {
+    min-width: 76px;
+    min-height: 44px;
+    border: 0;
+    border-radius: 10px;
+    background: #111827;
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.chatbot-form button:disabled,
+.chatbot-form input:disabled,
+.chatbot-quick-btn:disabled {
+    cursor: wait;
+    opacity: 0.68;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+@media (max-width: 600px) {
+    .chatbot-fab {
+        right: 16px;
+        bottom: 16px;
+    }
+
+    .chatbot-widget {
+        right: 10px;
+        bottom: 84px;
+        width: calc(100vw - 20px);
+        height: min(72vh, 560px);
+    }
+}

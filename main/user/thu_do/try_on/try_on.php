@@ -22,11 +22,18 @@
             Xóa đồ đang thử
         </button>
 
+        <button onclick="renderAiTryOn()" class="ai-btn">
+            Render AI
+        </button>
+
+        <p id="aiStatus" class="ai-status"></p>
+
     </div>
 
     <div class="model-box" id="modelBox">
 
-        <img id="model" src="../../try_on_images/male.png">
+        <img id="model" src="/DoAnWeb/main/user/thu_do/try_on_images/male.png">
+        <img id="aiResultLayer" class="ai-result-layer" alt="AI try-on result">
 
         <img id="shirtLayer" class="clothes-layer">
         <img id="pantsLayer" class="clothes-layer">
