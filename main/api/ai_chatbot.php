@@ -87,12 +87,31 @@ function extractKeywords($question) {
     return array_values(array_unique(array_slice($keywords, 0, 8)));
 }
 
+function isProductCountQuestion($question) {
+    $normalized = normalizeText($question);
+
+    return hasAny($normalized, ["bao nhieu san pham", "tong san pham", "tat ca bao nhieu", "co tat ca bao nhieu"]);
+}
+
+function answerProductCount($conn) {
+    $sql = "SELECT COUNT(*) AS total_products, COALESCE(SUM(soluong), 0) AS total_stock FROM sanpham";
+    $result = $conn->query($sql);
+
+    if (!$result) {
+        return FALLBACK_ANSWER;
+    }
+
+    $row = $result->fetch_assoc();
+    $totalProducts = (int)$row["total_products"];
+    $totalStock = (int)$row["total_stock"];
+
+    return "Hiện tại hệ thống có " . $totalProducts . " mẫu sản phẩm trong bảng sanpham, với tổng số lượng tồn kho là " . $totalStock . " sản phẩm.";
+}
+
 function tableExists($conn, $tableName) {
-    $stmt = $conn->prepare("SHOW TABLES LIKE ?");
-    $stmt->bind_param("s", $tableName);
-    $stmt->execute();
-    $stmt->store_result();
-    return $stmt->num_rows > 0;
+    $safeTableName = $conn->real_escape_string($tableName);
+    $result = $conn->query("SHOW TABLES LIKE '$safeTableName'");
+    return $result && $result->num_rows > 0;
 }
 
 function searchPolicies($conn, $question, $keywords) {
@@ -102,34 +121,29 @@ function searchPolicies($conn, $question, $keywords) {
 
     $terms = array_merge([$question], $keywords);
     $where = [];
-    $params = [];
-    $types = "";
 
     foreach ($terms as $term) {
         $term = trim($term);
         if ($term === "") continue;
-        $like = "%" . $term . "%";
-        $where[] = "(title LIKE ? OR content LIKE ? OR keywords LIKE ?)";
-        $params[] = $like;
-        $params[] = $like;
-        $params[] = $like;
-        $types .= "sss";
+        $like = "%" . $conn->real_escape_string($term) . "%";
+        $where[] = "(title LIKE '$like' OR content LIKE '$like' OR keywords LIKE '$like')";
     }
 
     if (empty($where)) return [];
 
     $sql = "SELECT id, title, content FROM store_policies WHERE " . implode(" OR ", $where) . " ORDER BY id DESC LIMIT 3";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param($types, ...$params);
-    $stmt->execute();
-    $stmt->bind_result($id, $title, $content);
+    $result = $conn->query($sql);
 
     $rows = [];
-    while ($stmt->fetch()) {
+    if (!$result) {
+        return [];
+    }
+
+    while ($row = $result->fetch_assoc()) {
         $rows[] = [
-            "id" => $id,
-            "title" => $title,
-            "content" => $content
+            "id" => $row["id"],
+            "title" => $row["title"],
+            "content" => $row["content"]
         ];
     }
     return $rows;
@@ -137,102 +151,102 @@ function searchPolicies($conn, $question, $keywords) {
 
 function searchProducts($conn, $question, $keywords) {
     $normalized = normalizeText($question);
-    $where = [];
-    $params = [];
-    $types = "";
+    $filters = [];
+    $keywordWhere = [];
 
     foreach ($keywords as $keyword) {
-        $like = "%" . $keyword . "%";
-        $where[] = "(LOWER(ten_sp) LIKE ? OR LOWER(loai_sp) LIKE ? OR LOWER(gt_sp) LIKE ? OR LOWER(mo_ta) LIKE ?)";
-        $params[] = $like;
-        $params[] = $like;
-        $params[] = $like;
-        $params[] = $like;
-        $types .= "ssss";
+        if (preg_match("/^[0-9]+k?$/", $keyword)) {
+            continue;
+        }
+
+        if (in_array($keyword, ["ao", "quan", "vay", "dam", "giay", "dep", "nam", "nu", "unisex", "con", "hang", "ton", "kho", "re"])) {
+            continue;
+        }
+
+        $like = "%" . $conn->real_escape_string($keyword) . "%";
+        $keywordWhere[] = "(LOWER(ten_sp) LIKE '$like' OR LOWER(loai_sp) LIKE '$like' OR LOWER(gt_sp) LIKE '$like' OR LOWER(mo_ta) LIKE '$like')";
     }
 
+    $categoryWhere = [];
     if (hasAny($normalized, ["ao", "shirt", "sweater"])) {
-        $where[] = "LOWER(loai_sp) LIKE ?";
-        $params[] = "%áo%";
-        $types .= "s";
+        $categoryWhere[] = "LOWER(loai_sp) LIKE '%áo%'";
     }
     if (hasAny($normalized, ["quan", "jean", "jogger", "short"])) {
-        $where[] = "LOWER(loai_sp) LIKE ?";
-        $params[] = "%quần%";
-        $types .= "s";
+        $categoryWhere[] = "LOWER(loai_sp) LIKE '%quần%'";
     }
     if (hasAny($normalized, ["vay", "dam"])) {
-        $where[] = "(LOWER(loai_sp) LIKE ? OR LOWER(ten_sp) LIKE ?)";
-        $params[] = "%váy%";
-        $params[] = "%đầm%";
-        $types .= "ss";
+        $categoryWhere[] = "(LOWER(loai_sp) LIKE '%váy%' OR LOWER(ten_sp) LIKE '%đầm%')";
     }
     if (hasAny($normalized, ["giay", "dep"])) {
-        $where[] = "LOWER(loai_sp) LIKE ?";
-        $params[] = "%giày%";
-        $types .= "s";
+        $categoryWhere[] = "LOWER(loai_sp) LIKE '%giày%'";
     }
+    if (!empty($categoryWhere)) {
+        $filters[] = "(" . implode(" OR ", $categoryWhere) . ")";
+    }
+
+    $genderWhere = [];
     if (hasAny($normalized, ["nam"])) {
-        $where[] = "LOWER(gt_sp) LIKE ?";
-        $params[] = "%nam%";
-        $types .= "s";
+        $genderWhere[] = "LOWER(gt_sp) LIKE '%nam%'";
     }
     if (hasAny($normalized, ["nu"])) {
-        $where[] = "LOWER(gt_sp) LIKE ?";
-        $params[] = "%nữ%";
-        $types .= "s";
+        $genderWhere[] = "LOWER(gt_sp) LIKE '%nữ%'";
     }
     if (hasAny($normalized, ["unisex"])) {
-        $where[] = "LOWER(gt_sp) LIKE ?";
-        $params[] = "%unisex%";
-        $types .= "s";
+        $genderWhere[] = "LOWER(gt_sp) LIKE '%unisex%'";
+    }
+    if (!empty($genderWhere)) {
+        $filters[] = "(" . implode(" OR ", $genderWhere) . ")";
     }
 
-    $priceSql = "";
-    if (hasAny($normalized, ["duoi 50", "duoi 50k", "re", "gia re"])) {
-        $priceSql = " AND gia < 50000";
+    if (preg_match("/duoi\s+([0-9]+)\s*k?/", $normalized, $priceMatch)) {
+        $maxPrice = ((int)$priceMatch[1]) * 1000;
+        $filters[] = "gia < " . $maxPrice;
+    } elseif (preg_match("/tren\s+([0-9]+)\s*k?/", $normalized, $priceMatch)) {
+        $minPrice = ((int)$priceMatch[1]) * 1000;
+        $filters[] = "gia > " . $minPrice;
+    } elseif (hasAny($normalized, ["re", "gia re"])) {
+        $filters[] = "gia < 50000";
     } elseif (hasAny($normalized, ["50k", "100k", "50 den 100"])) {
-        $priceSql = " AND gia BETWEEN 50000 AND 100000";
+        $filters[] = "gia BETWEEN 50000 AND 100000";
     } elseif (hasAny($normalized, ["tren 100", "tren 100k", "cao cap"])) {
-        $priceSql = " AND gia > 100000";
+        $filters[] = "gia > 100000";
     }
 
-    $stockSql = "";
     if (hasAny($normalized, ["con hang", "ton kho", "so luong"])) {
-        $stockSql = " AND soluong > 0";
+        $filters[] = "soluong > 0";
     }
 
-    if (empty($where)) {
-        if ($priceSql === "" && $stockSql === "") {
-            return [];
-        }
-        $where[] = "1=1";
+    if (!empty($keywordWhere)) {
+        $filters[] = "(" . implode(" OR ", $keywordWhere) . ")";
+    }
+
+    if (empty($filters)) {
+        return [];
     }
 
     $sql = "SELECT id, ten_sp, loai_sp, gt_sp, soluong, gia, mo_ta, hinh_anh
             FROM sanpham
-            WHERE (" . implode(" OR ", $where) . ")" . $priceSql . $stockSql . "
+            WHERE " . implode(" AND ", $filters) . "
             ORDER BY soluong DESC, gia ASC
             LIMIT 5";
 
-    $stmt = $conn->prepare($sql);
-    if ($types !== "") {
-        $stmt->bind_param($types, ...$params);
-    }
-    $stmt->execute();
-    $stmt->bind_result($id, $ten_sp, $loai_sp, $gt_sp, $soluong, $gia, $mo_ta, $hinh_anh);
+    $result = $conn->query($sql);
 
     $rows = [];
-    while ($stmt->fetch()) {
+    if (!$result) {
+        return [];
+    }
+
+    while ($row = $result->fetch_assoc()) {
         $rows[] = [
-            "id" => $id,
-            "ten_sp" => $ten_sp,
-            "loai_sp" => $loai_sp,
-            "gt_sp" => $gt_sp,
-            "soluong" => $soluong,
-            "gia" => $gia,
-            "mo_ta" => $mo_ta,
-            "hinh_anh" => $hinh_anh
+            "id" => $row["id"],
+            "ten_sp" => $row["ten_sp"],
+            "loai_sp" => $row["loai_sp"],
+            "gt_sp" => $row["gt_sp"],
+            "soluong" => $row["soluong"],
+            "gia" => $row["gia"],
+            "mo_ta" => $row["mo_ta"],
+            "hinh_anh" => $row["hinh_anh"]
         ];
     }
 
@@ -278,6 +292,12 @@ $question = getInputQuestion();
 
 if ($question === "") {
     jsonResponse("Bạn hãy nhập câu hỏi về sản phẩm, giá, tồn kho hoặc chính sách cửa hàng nhé.");
+}
+
+if (isProductCountQuestion($question)) {
+    jsonResponse(answerProductCount($conn), [
+        "type" => "product_count"
+    ]);
 }
 
 $keywords = extractKeywords($question);

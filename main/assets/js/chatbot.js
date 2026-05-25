@@ -64,10 +64,30 @@
                 body: JSON.stringify({ question: cleanQuestion })
             });
 
-            const data = await response.json();
+            const rawText = await response.text();
+            let data = {};
+
+            try {
+                data = rawText ? JSON.parse(rawText) : {};
+            } catch (error) {
+                console.error("API chatbot không trả JSON hợp lệ:", rawText);
+                data = {
+                    success: false,
+                    answer: "API chatbot đang lỗi PHP hoặc không trả JSON. Bạn mở trực tiếp /main/api/ai_chatbot.php để xem lỗi chi tiết."
+                };
+            }
+
             const answer = data && data.answer
                 ? data.answer
                 : "Xin lỗi, hiện tại tôi chưa có thông tin về nội dung này.";
+
+            if (!response.ok || data.success === false) {
+                console.error("Chatbot API lỗi:", {
+                    status: response.status,
+                    data: data,
+                    rawText: rawText
+                });
+            }
 
             if (loadingRow) loadingRow.remove();
             addMessage("bot", answer);
